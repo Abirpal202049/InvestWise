@@ -111,11 +111,13 @@ export function SIPYearlyTable({ data, region, showMonthlyAmount = false, showIn
               <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-slate-300 uppercase tracking-wider">
                 Total Returns
               </th>
-              {displayInflation && (
-                <th className="px-4 py-3 text-right text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                  Inflation Adjusted
-                </th>
-              )}
+              <th
+                className={`px-4 py-3 text-right text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider transition-all duration-300 ${
+                  displayInflation ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 overflow-hidden px-0'
+                }`}
+              >
+                {displayInflation && 'Inflation Adjusted'}
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
@@ -148,11 +150,13 @@ export function SIPYearlyTable({ data, region, showMonthlyAmount = false, showIn
                 <td className="px-4 py-3 text-sm text-right text-green-600 dark:text-green-400 font-medium">
                   {formatCurrency(row.totalReturns, region)}
                 </td>
-                {displayInflation && (
-                  <td className="px-4 py-3 text-sm text-right text-amber-600 dark:text-amber-400 font-medium">
-                    {formatCurrency(row.inflationAdjustedValue || row.valueAtYearEnd, region)}
-                  </td>
-                )}
+                <td
+                  className={`px-4 py-3 text-sm text-right text-amber-600 dark:text-amber-400 font-medium transition-all duration-300 ${
+                    displayInflation ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 overflow-hidden px-0'
+                  }`}
+                >
+                  {displayInflation && formatCurrency(row.inflationAdjustedValue || row.valueAtYearEnd, region)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -178,13 +182,15 @@ export function SIPYearlyTable({ data, region, showMonthlyAmount = false, showIn
                   ? formatCurrency(data[data.length - 1].totalReturns, region)
                   : '-'}
               </td>
-              {displayInflation && (
-                <td className="px-4 py-3 text-sm text-right text-amber-700 dark:text-amber-400 font-bold">
-                  {data.length > 0
-                    ? formatCurrency(data[data.length - 1].inflationAdjustedValue || data[data.length - 1].valueAtYearEnd, region)
-                    : '-'}
-                </td>
-              )}
+              <td
+                className={`px-4 py-3 text-sm text-right text-amber-700 dark:text-amber-400 font-bold transition-all duration-300 ${
+                  displayInflation ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 overflow-hidden px-0'
+                }`}
+              >
+                {displayInflation && (data.length > 0
+                  ? formatCurrency(data[data.length - 1].inflationAdjustedValue || data[data.length - 1].valueAtYearEnd, region)
+                  : '-')}
+              </td>
             </tr>
           </tfoot>
         </table>
@@ -236,11 +242,13 @@ export function SWPYearlyTable({ data, region, showInflation = true }: SWPYearly
               <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-slate-300 uppercase tracking-wider">
                 Interest Earned
               </th>
-              {displayInflation && (
-                <th className="px-4 py-3 text-right text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
-                  Corpus (Today's Value)
-                </th>
-              )}
+              <th
+                className={`px-4 py-3 text-right text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider transition-all duration-300 ${
+                  displayInflation ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 overflow-hidden px-0'
+                }`}
+              >
+                {displayInflation && "Corpus (Today's Value)"}
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
@@ -268,11 +276,13 @@ export function SWPYearlyTable({ data, region, showInflation = true }: SWPYearly
                 <td className="px-4 py-3 text-sm text-right text-green-600 dark:text-green-400 font-medium">
                   {formatCurrency(row.interestEarned, region)}
                 </td>
-                {displayInflation && (
-                  <td className="px-4 py-3 text-sm text-right text-amber-600 dark:text-amber-400 font-medium">
-                    {formatCurrency(row.inflationAdjustedCorpus || row.corpusAtYearEnd, region)}
-                  </td>
-                )}
+                <td
+                  className={`px-4 py-3 text-sm text-right text-amber-600 dark:text-amber-400 font-medium transition-all duration-300 ${
+                    displayInflation ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 overflow-hidden px-0'
+                  }`}
+                >
+                  {displayInflation && formatCurrency(row.inflationAdjustedCorpus || row.corpusAtYearEnd, region)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -300,13 +310,15 @@ export function SWPYearlyTable({ data, region, showInflation = true }: SWPYearly
                     )
                   : '-'}
               </td>
-              {displayInflation && (
-                <td className="px-4 py-3 text-sm text-right text-amber-700 dark:text-amber-400 font-bold">
-                  {data.length > 0
-                    ? formatCurrency(data[data.length - 1].inflationAdjustedCorpus || data[data.length - 1].corpusAtYearEnd, region)
-                    : '-'}
-                </td>
-              )}
+              <td
+                className={`px-4 py-3 text-sm text-right text-amber-700 dark:text-amber-400 font-bold transition-all duration-300 ${
+                  displayInflation ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0 overflow-hidden px-0'
+                }`}
+              >
+                {displayInflation && (data.length > 0
+                  ? formatCurrency(data[data.length - 1].inflationAdjustedCorpus || data[data.length - 1].corpusAtYearEnd, region)
+                  : '-')}
+              </td>
             </tr>
           </tfoot>
         </table>

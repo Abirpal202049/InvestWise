@@ -115,7 +115,7 @@ export function SIPCalculator({ region, showInflation }: SIPCalculatorProps) {
         {/* Results Panel */}
         <div className="lg:col-span-2 space-y-5">
           {/* Summary Cards */}
-          <div className={`grid grid-cols-1 sm:grid-cols-2 ${showInflation ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-3`}>
+          <div className={`grid grid-cols-1 sm:grid-cols-2 ${showInflation ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-3 transition-all duration-300`}>
             <SummaryCard
               title="Total Investment"
               value={formatCurrency(result.totalInvestment, region)}
@@ -134,15 +134,23 @@ export function SIPCalculator({ region, showInflation }: SIPCalculatorProps) {
               icon={<PiggyBank className="w-5 h-5" />}
               variant="maturity"
             />
-            {showInflation && (
-              <SummaryCard
-                title="Inflation Adjusted"
-                value={formatCurrency(result.inflationAdjustedMaturity || result.maturityValue, region)}
-                icon={<TrendingDown className="w-5 h-5" />}
-                variant="inflation"
-                subtitle="Today's value"
-              />
-            )}
+            <div
+              className={`transition-all duration-300 ease-in-out ${
+                showInflation
+                  ? 'opacity-100 scale-100 max-w-full'
+                  : 'opacity-0 scale-95 max-w-0 overflow-hidden'
+              }`}
+            >
+              {showInflation && (
+                <SummaryCard
+                  title="Inflation Adjusted"
+                  value={formatCurrency(result.inflationAdjustedMaturity || result.maturityValue, region)}
+                  icon={<TrendingDown className="w-5 h-5" />}
+                  variant="inflation"
+                  subtitle="Today's value"
+                />
+              )}
+            </div>
           </div>
 
           {/* Charts */}

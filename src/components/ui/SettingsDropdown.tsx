@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Settings, ChevronDown } from 'lucide-react';
+import { Settings, ChevronDown, Sun, Moon } from 'lucide-react';
 import type { Region } from '../../types';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface SettingsDropdownProps {
   region: Region;
@@ -17,6 +18,7 @@ export function SettingsDropdown({
 }: SettingsDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { isDark, toggleTheme } = useTheme();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -48,11 +50,45 @@ export function SettingsDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 py-2 z-50">
+        <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-700 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="px-3 py-2 border-b border-gray-100 dark:border-slate-700">
             <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
               Settings
             </p>
+          </div>
+
+          {/* Theme Toggle */}
+          <div className="px-3 py-3 border-b border-gray-100 dark:border-slate-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">Theme</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400">Switch between light and dark</p>
+              </div>
+              <div className="flex items-center gap-1 bg-gray-100 dark:bg-slate-700 rounded-lg p-0.5">
+                <button
+                  onClick={() => isDark && toggleTheme()}
+                  className={`p-1.5 rounded-md transition-all duration-200 ${
+                    !isDark
+                      ? 'bg-white dark:bg-slate-600 text-amber-500 shadow-sm'
+                      : 'text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200'
+                  }`}
+                  aria-label="Light mode"
+                >
+                  <Sun className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => !isDark && toggleTheme()}
+                  className={`p-1.5 rounded-md transition-all duration-200 ${
+                    isDark
+                      ? 'bg-white dark:bg-slate-600 text-indigo-400 shadow-sm'
+                      : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                  aria-label="Dark mode"
+                >
+                  <Moon className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Currency Toggle */}
@@ -97,7 +133,7 @@ export function SettingsDropdown({
               <button
                 onClick={() => onInflationToggle(!showInflation)}
                 className={`
-                  relative w-11 h-6 rounded-full transition-colors duration-200
+                  relative w-11 h-6 rounded-full transition-colors duration-300 ease-in-out
                   ${showInflation
                     ? 'bg-indigo-600'
                     : 'bg-gray-300 dark:bg-slate-600'
@@ -108,10 +144,11 @@ export function SettingsDropdown({
               >
                 <span
                   className={`
-                    absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm
-                    transition-transform duration-200
-                    ${showInflation ? 'translate-x-5' : 'translate-x-0'}
+                    absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md
+                    transition-all duration-300 ease-in-out
+                    ${showInflation ? 'translate-x-5 scale-110' : 'translate-x-0 scale-100'}
                   `}
+                  style={{ transitionTimingFunction: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)' }}
                 />
               </button>
             </div>

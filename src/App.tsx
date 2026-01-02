@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Calculator, TrendingUp, ArrowDownUp } from 'lucide-react';
 import type { Region, CalculatorType } from './types';
-import { Tabs, ThemeToggle, SettingsDropdown } from './components/ui';
+import { Tabs, SettingsDropdown } from './components/ui';
 import { SIPCalculator, StepUpSIPCalculator, SWPCalculator } from './components/calculator';
 
 const CALCULATOR_TABS = [
@@ -32,15 +32,12 @@ function App() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-              <SettingsDropdown
-                region={region}
-                onRegionChange={setRegion}
-                showInflation={showInflation}
-                onInflationToggle={setShowInflation}
-              />
-            </div>
+            <SettingsDropdown
+              region={region}
+              onRegionChange={setRegion}
+              showInflation={showInflation}
+              onInflationToggle={setShowInflation}
+            />
           </div>
         </div>
       </header>
