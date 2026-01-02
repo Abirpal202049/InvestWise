@@ -1,9 +1,23 @@
 import { useState, useRef, useEffect } from 'react';
 import type { YearlyData, SWPYearlyData, Region } from '../../types';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { exportSIPData, exportSWPData } from '../../utils/exportData';
+import { exportSIPData, exportSWPData, exportSIPToGoogleSheets, exportSWPToGoogleSheets } from '../../utils/exportData';
 import { CardTitle } from '../ui';
-import { Table, Download, FileSpreadsheet, FileText, ChevronDown } from 'lucide-react';
+import { Table, Download, FileSpreadsheet, FileText, ChevronDown, ExternalLink } from 'lucide-react';
+
+function GoogleSheetsIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      fill="#34A853"
+    >
+      <path d="M11.318 12.545H7.91v-1.909h3.41v1.91zM14.728 0v6h6l-6-6zm1.363 10.636h-3.41v1.91h3.41v-1.91zm0 3.273h-3.41v1.91h3.41v-1.91zM20.727 6.5v15.864c0 .904-.732 1.636-1.636 1.636H4.909a1.636 1.636 0 0 1-1.636-1.636V1.636C3.273.732 4.005 0 4.909 0h9.318v6.5h6.5zm-3.273 2.773H6.545v7.909h10.91v-7.91zm-6.136 4.636H7.91v1.91h3.41v-1.91z" />
+    </svg>
+  );
+}
 
 interface SIPYearlyTableProps {
   data: YearlyData[];
@@ -15,9 +29,10 @@ interface SIPYearlyTableProps {
 interface ExportDropdownProps {
   onExportCSV: () => void;
   onExportExcel: () => void;
+  onExportGoogleSheets: () => void;
 }
 
-function ExportDropdown({ onExportCSV, onExportExcel }: ExportDropdownProps) {
+function ExportDropdown({ onExportCSV, onExportExcel, onExportGoogleSheets }: ExportDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,7 +57,7 @@ function ExportDropdown({ onExportCSV, onExportExcel }: ExportDropdownProps) {
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg shadow-lg z-50">
+        <div className="absolute right-0 mt-1 w-60 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg shadow-lg z-50">
           <button
             onClick={() => {
               onExportCSV();
@@ -58,10 +73,21 @@ function ExportDropdown({ onExportCSV, onExportExcel }: ExportDropdownProps) {
               onExportExcel();
               setIsOpen(false);
             }}
-            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors rounded-b-lg border-t border-gray-100 dark:border-slate-600"
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors border-t border-gray-100 dark:border-slate-600"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             Export as Excel
+          </button>
+          <button
+            onClick={() => {
+              onExportGoogleSheets();
+              setIsOpen(false);
+            }}
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors rounded-b-lg border-t border-gray-100 dark:border-slate-600"
+          >
+            <GoogleSheetsIcon className="w-4 h-4" />
+            Open in Google Sheets
+            <ExternalLink className='w-4 h-4' />
           </button>
         </div>
       )}
@@ -82,8 +108,9 @@ export function SIPYearlyTable({ data, region, showMonthlyAmount = false, showIn
           <CardTitle>Year-on-Year Breakdown</CardTitle>
         </div>
         <ExportDropdown
-          onExportCSV={() => exportSIPData(data, region, 'csv', showMonthlyAmount)}
-          onExportExcel={() => exportSIPData(data, region, 'excel', showMonthlyAmount)}
+          onExportCSV={() => exportSIPData(data, region, 'csv', showMonthlyAmount, displayInflation)}
+          onExportExcel={() => exportSIPData(data, region, 'excel', showMonthlyAmount, displayInflation)}
+          onExportGoogleSheets={() => exportSIPToGoogleSheets(data, region, showMonthlyAmount, displayInflation)}
         />
       </div>
       {/* Table Content */}
@@ -218,8 +245,9 @@ export function SWPYearlyTable({ data, region, showInflation = true }: SWPYearly
           <CardTitle>Year-on-Year Breakdown</CardTitle>
         </div>
         <ExportDropdown
-          onExportCSV={() => exportSWPData(data, region, 'csv')}
-          onExportExcel={() => exportSWPData(data, region, 'excel')}
+          onExportCSV={() => exportSWPData(data, region, 'csv', displayInflation)}
+          onExportExcel={() => exportSWPData(data, region, 'excel', displayInflation)}
+          onExportGoogleSheets={() => exportSWPToGoogleSheets(data, region, displayInflation)}
         />
       </div>
       {/* Table Content */}
