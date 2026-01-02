@@ -107,22 +107,25 @@ export function ChartTabs({
 
       {/* Fullscreen Modal */}
       {isExpanded && (
-        <div className="fixed inset-0 z-50 bg-white dark:bg-slate-900 flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{growthTitle}</h2>
-            <button
-              onClick={handleClose}
-              className="p-2 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-              title="Close"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-          {/* Chart Container */}
-          <div className="flex-1 p-6">
-            <div className="w-full h-full">
-              <GrowthChart data={chartData} region={region} fullHeight showInflation={showInflation} isSWP={isSWP} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/30 dark:bg-black/50 backdrop-blur-sm">
+          {/* Modal Container */}
+          <div className="w-[95vw] h-full max-h-[90vh] bg-white dark:bg-slate-900/80 backdrop-blur-xl rounded-xl shadow-2xl border border-white/40 dark:border-slate-700/40 flex flex-col overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200/50 dark:border-slate-700/50">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{growthTitle}</h2>
+              <button
+                onClick={handleClose}
+                className="p-2 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-slate-700/50 rounded-lg transition-colors"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            {/* Chart Container */}
+            <div className="flex-1 p-6 overflow-hidden">
+              <div className="w-full h-full">
+                <GrowthChart data={chartData} region={region} fullHeight showInflation={showInflation} isSWP={isSWP} />
+              </div>
             </div>
           </div>
         </div>
