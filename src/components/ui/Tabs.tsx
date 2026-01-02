@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Tab {
   id: string;
@@ -9,17 +10,17 @@ interface Tab {
 interface TabsProps {
   tabs: Tab[];
   activeTab: string;
-  onChange: (tabId: string) => void;
+  onChange?: (tabId: string) => void;
 }
 
-export function Tabs({ tabs, activeTab, onChange }: TabsProps) {
+export function Tabs({ tabs, activeTab }: TabsProps) {
   return (
     <div className="border-b border-gray-200 dark:border-slate-700">
       <nav className="flex gap-1" aria-label="Tabs">
         {tabs.map((tab) => (
-          <button
+          <Link
             key={tab.id}
-            onClick={() => onChange(tab.id)}
+            to={`/${tab.id}`}
             className={`
               flex items-center gap-2 px-4 py-3 text-sm font-medium
               border-b-2 transition-colors duration-200
@@ -31,7 +32,7 @@ export function Tabs({ tabs, activeTab, onChange }: TabsProps) {
           >
             {tab.icon}
             {tab.label}
-          </button>
+          </Link>
         ))}
       </nav>
     </div>
