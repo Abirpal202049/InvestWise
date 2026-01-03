@@ -1,5 +1,6 @@
 import type {
   SIPInputs,
+  LumpsumInputs,
   StepUpSIPInputs,
   SWPInputs,
   CalculationResult,
@@ -72,6 +73,54 @@ export function calculateSIP(inputs: SIPInputs, inflationRate: number = 0): Calc
   return {
     totalInvestment: roundToTwo(cumulativeInvestment),
     expectedReturns: roundToTwo(currentValue - cumulativeInvestment),
+    maturityValue: roundToTwo(currentValue),
+    yearlyData,
+    inflationAdjustedMaturity: roundToTwo(inflationAdjustedMaturity),
+    inflationAdjustedReturns: roundToTwo(inflationAdjustedReturns),
+  };
+}
+
+/**
+ * Calculate Lumpsum Investment
+ * Formula: A = P × (1 + r)^t
+ * Where A = Maturity Amount, P = Principal, r = Annual rate, t = Time in years
+ */
+export function calculateLumpsum(inputs: LumpsumInputs, inflationRate: number = 0): CalculationResult {
+  const { principalAmount, expectedReturn, tenure } = inputs;
+
+  const annualRate = expectedReturn / 100;
+  const yearlyData: YearlyData[] = [];
+
+  let currentValue = principalAmount;
+
+  for (let year = 1; year <= tenure; year++) {
+    // Apply compound interest for the year
+    currentValue = currentValue * (1 + annualRate);
+
+    // Calculate inflation-adjusted values (in today's purchasing power)
+    const discountFactor = getInflationDiscountFactor(inflationRate, year);
+    const inflationAdjustedValue = currentValue * discountFactor;
+    const inflationAdjustedReturns = (currentValue - principalAmount) * discountFactor;
+
+    yearlyData.push({
+      year,
+      annualInvestment: year === 1 ? roundToTwo(principalAmount) : 0,
+      cumulativeInvestment: roundToTwo(principalAmount),
+      valueAtYearEnd: roundToTwo(currentValue),
+      totalReturns: roundToTwo(currentValue - principalAmount),
+      inflationAdjustedValue: roundToTwo(inflationAdjustedValue),
+      inflationAdjustedReturns: roundToTwo(inflationAdjustedReturns),
+    });
+  }
+
+  // Final inflation-adjusted values
+  const finalDiscountFactor = getInflationDiscountFactor(inflationRate, tenure);
+  const inflationAdjustedMaturity = currentValue * finalDiscountFactor;
+  const inflationAdjustedReturns = (currentValue - principalAmount) * finalDiscountFactor;
+
+  return {
+    totalInvestment: roundToTwo(principalAmount),
+    expectedReturns: roundToTwo(currentValue - principalAmount),
     maturityValue: roundToTwo(currentValue),
     yearlyData,
     inflationAdjustedMaturity: roundToTwo(inflationAdjustedMaturity),

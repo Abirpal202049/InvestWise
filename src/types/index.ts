@@ -11,6 +11,13 @@ export interface SIPInputs {
   region: Region;
 }
 
+export interface LumpsumInputs {
+  principalAmount: number;
+  expectedReturn: number;
+  tenure: number;
+  region: Region;
+}
+
 export interface StepUpSIPInputs extends SIPInputs {
   stepUpPercentage: number;
   stepUpFrequency: StepUpFrequency;

@@ -5,6 +5,10 @@ export const DEFAULT_VALUES = {
     INR: 25000,
     USD: 300,
   },
+  lumpsumAmount: {
+    INR: 500000,
+    USD: 5000,
+  },
   initialCorpus: {
     INR: 10000000,
     USD: 60000,
@@ -28,6 +32,10 @@ export const INPUT_RANGES = {
   monthlyInvestment: {
     INR: { min: 500, max: 1000000, step: 500 },
     USD: { min: 10, max: 10000, step: 10 },
+  },
+  lumpsumAmount: {
+    INR: { min: 10000, max: 10000000, step: 10000 },
+    USD: { min: 100, max: 100000, step: 100 },
   },
   initialCorpus: {
     INR: { min: 100000, max: 100000000, step: 100000 },

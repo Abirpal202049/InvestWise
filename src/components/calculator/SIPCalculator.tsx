@@ -1,13 +1,15 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Wallet, TrendingUp, PiggyBank, RotateCcw, TrendingDown } from 'lucide-react';
+import { Wallet, TrendingUp, PiggyBank, RotateCcw, TrendingDown, Banknote } from 'lucide-react';
 import type { Region } from '../../types';
-import { calculateSIP, toChartData } from '../../utils/calculations';
+import { calculateSIP, calculateLumpsum, toChartData } from '../../utils/calculations';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { DEFAULT_VALUES, INPUT_RANGES } from '../../utils/constants';
 import { SliderInput, SummaryCard, Button } from '../ui';
 import { ChartTabs } from '../charts';
 import { SIPYearlyTable } from './YearlyTable';
 import { useSEO, SEO_CONFIG } from '../../hooks/useSEO';
+
+type InvestmentMode = 'sip' | 'lumpsum';
 
 interface SIPCalculatorProps {
   region: Region;
@@ -17,8 +19,12 @@ interface SIPCalculatorProps {
 export function SIPCalculator({ region, showInflation }: SIPCalculatorProps) {
   useSEO(SEO_CONFIG['sip-calculator']);
 
+  const [investmentMode, setInvestmentMode] = useState<InvestmentMode>('sip');
   const [monthlyInvestment, setMonthlyInvestment] = useState(
     DEFAULT_VALUES.monthlyInvestment[region]
+  );
+  const [lumpsumAmount, setLumpsumAmount] = useState(
+    DEFAULT_VALUES.lumpsumAmount[region]
   );
   const [expectedReturn, setExpectedReturn] = useState(DEFAULT_VALUES.expectedReturn);
   const [tenure, setTenure] = useState(DEFAULT_VALUES.tenure);
@@ -27,31 +33,40 @@ export function SIPCalculator({ region, showInflation }: SIPCalculatorProps) {
   // Update values when region changes
   useEffect(() => {
     setMonthlyInvestment(DEFAULT_VALUES.monthlyInvestment[region]);
+    setLumpsumAmount(DEFAULT_VALUES.lumpsumAmount[region]);
     setInflationRate(DEFAULT_VALUES.inflationRate[region]);
   }, [region]);
 
-  const result = useMemo(
-    () =>
-      calculateSIP({
-        monthlyInvestment,
+  const result = useMemo(() => {
+    if (investmentMode === 'lumpsum') {
+      return calculateLumpsum({
+        principalAmount: lumpsumAmount,
         expectedReturn,
         tenure,
         region,
-      }, inflationRate),
-    [monthlyInvestment, expectedReturn, tenure, region, inflationRate]
-  );
+      }, inflationRate);
+    }
+    return calculateSIP({
+      monthlyInvestment,
+      expectedReturn,
+      tenure,
+      region,
+    }, inflationRate);
+  }, [investmentMode, monthlyInvestment, lumpsumAmount, expectedReturn, tenure, region, inflationRate]);
 
   const chartData = useMemo(() => toChartData(result.yearlyData), [result.yearlyData]);
 
   const handleReset = useCallback(() => {
     setMonthlyInvestment(DEFAULT_VALUES.monthlyInvestment[region]);
+    setLumpsumAmount(DEFAULT_VALUES.lumpsumAmount[region]);
     setExpectedReturn(DEFAULT_VALUES.expectedReturn);
     setTenure(DEFAULT_VALUES.tenure);
     setInflationRate(DEFAULT_VALUES.inflationRate[region]);
   }, [region]);
 
   const currencySymbol = region === 'INR' ? '₹' : '$';
-  const ranges = INPUT_RANGES.monthlyInvestment[region];
+  const sipRanges = INPUT_RANGES.monthlyInvestment[region];
+  const lumpsumRanges = INPUT_RANGES.lumpsumAmount[region];
 
   return (
     <div className="md:space-y-5">
@@ -62,22 +77,63 @@ export function SIPCalculator({ region, showInflation }: SIPCalculatorProps) {
           <div className="bg-white dark:bg-slate-800 md:rounded-xl md:border md:border-gray-100 md:dark:border-slate-700 md:shadow-sm">
             <div className="px-4 py-4 md:p-5 space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">SIP Parameters</h2>
+                <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
+                  {investmentMode === 'sip' ? 'SIP' : 'Lumpsum'} Parameters
+                </h2>
                 <Button variant="ghost" size="sm" onClick={handleReset}>
                   <RotateCcw className="w-4 h-4" />
                   Reset
                 </Button>
               </div>
 
-              <SliderInput
-                label="Monthly Investment"
-                value={monthlyInvestment}
-                onChange={setMonthlyInvestment}
-                min={ranges.min}
-                max={ranges.max}
-                step={ranges.step}
-                prefix={currencySymbol}
-              />
+              {/* Investment Mode Toggle */}
+              <div className="flex rounded-lg bg-gray-100 dark:bg-slate-700 p-1">
+                <button
+                  onClick={() => setInvestmentMode('sip')}
+                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all ${
+                    investmentMode === 'sip'
+                      ? 'bg-white dark:bg-slate-600 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <Wallet className="w-4 h-4" />
+                  SIP
+                </button>
+                <button
+                  onClick={() => setInvestmentMode('lumpsum')}
+                  className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all ${
+                    investmentMode === 'lumpsum'
+                      ? 'bg-white dark:bg-slate-600 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <Banknote className="w-4 h-4" />
+                  Lumpsum
+                </button>
+              </div>
+
+              {investmentMode === 'sip' ? (
+                <SliderInput
+                  label="Monthly Investment"
+                  value={monthlyInvestment}
+                  onChange={setMonthlyInvestment}
+                  min={sipRanges.min}
+                  max={sipRanges.max}
+                  step={sipRanges.step}
+                  prefix={currencySymbol}
+                />
+              ) : (
+                <SliderInput
+                  label="One-time Investment"
+                  value={lumpsumAmount}
+                  onChange={setLumpsumAmount}
+                  min={lumpsumRanges.min}
+                  max={lumpsumRanges.max}
+                  step={lumpsumRanges.step}
+                  prefix={currencySymbol}
+                  hint="Total amount to invest at once"
+                />
+              )}
 
               <SliderInput
                 label="Expected Return Rate"
