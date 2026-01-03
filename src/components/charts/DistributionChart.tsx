@@ -126,6 +126,8 @@ export function DistributionChart({ investment, returns, region }: DistributionC
               outerRadius={outerRadius}
               paddingAngle={2}
               dataKey="value"
+              startAngle={-270}
+              endAngle={90}
               stroke={isDark ? '#1e293b' : '#ffffff'}
               strokeWidth={2}
             >
