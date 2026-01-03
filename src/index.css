@@ -293,3 +293,24 @@ input[type="range"]:focus::-webkit-slider-thumb {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Remove focus ring from Recharts containers */
+.recharts-wrapper,
+.recharts-wrapper svg,
+.recharts-wrapper *,
+.recharts-surface {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.recharts-wrapper:focus,
+.recharts-wrapper:focus-visible,
+.recharts-wrapper:focus-within,
+.recharts-surface:focus,
+.recharts-surface:focus-visible,
+.recharts-responsive-container:focus,
+.recharts-responsive-container:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}

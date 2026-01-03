@@ -119,11 +119,11 @@ export function GrowthChart({ data, region, fullHeight = false, showInflation = 
   const displayInflation = showInflation && hasInflationData;
 
   return (
-    <div className={`w-full ${fullHeight ? 'h-full' : 'h-64 md:h-80'}`}>
+    <div className={`w-full ${fullHeight ? 'h-full' : 'h-64 md:h-80'} outline-none`} tabIndex={-1}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
-          margin={{ top: 5, right: isMobile ? 10 : 5, left: isMobile ? 0 : -10, bottom: 0 }}
+          margin={{ top: 5, right: isMobile ? 5 : 5, left: isMobile ? 5 : -10, bottom: 0 }}
         >
           <defs>
             <linearGradient id="colorInvestment" x1="0" y1="0" x2="0" y2="1">

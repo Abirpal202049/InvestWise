@@ -115,7 +115,7 @@ export function DistributionChart({ investment, returns, region }: DistributionC
 
   return (
     <div className="w-full">
-      <div className="h-48 md:h-64">
+      <div className="h-48 md:h-64 outline-none" tabIndex={-1}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
